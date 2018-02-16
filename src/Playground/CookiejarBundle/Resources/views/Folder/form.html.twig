@@ -1,0 +1,117 @@
+{# src/Playground/CookiejarBundle/Resources/views/Folder/form.html.twig #}
+
+<div class="row">
+	<div class="col col-lg-8 col-lg-offset-2 col-md-12">
+		<div class="ibox float-e-margins">
+			<div class="ibox-content">
+
+				{{ form_start(form) }}
+				{{ form_errors(form) }}
+
+				<div class="row form-group">
+					{{ form_label(form.name, null, {'label_attr': {'class': 'col-md-2'}}) }}
+					<div class="col col-md-10">{{ form_widget(form.name) }}</div>
+					<div class="form_errors col-md-12">
+						{{ form_errors(form.name) }}
+					</div>
+				</div>
+
+				<div class="hr-line-dashed"></div>
+
+				<div id="filesProto" data-prototype="{{ form_widget(form.documents.vars.prototype)|e }}"></div>
+
+				<div class="row">
+					<div class="col col-xs-12" id="filesBox">
+						{% set pos = 0 %}
+							{% for doc in form.documents %}
+
+							<div class="row">
+							   <div class="col col-xs-1" id="jsRemove{{ pos }}" style="">
+								   <button type="button" class="btn btn-danger" onclick="removeFile($(this));"><i class="fa fa-times" aria-hidden="true"></i></button>
+							   </div>
+							   <div class="col col-xs-11" id="jsPreview{{ pos }}">{{ doc.vars.value.name }}</div>
+
+							   <div style="display:none">
+								  {{ form_widget(doc) }}
+							   </div>
+							</div>
+
+							{% set pos = pos + 1 %}
+						{% endfor %}
+					</div>
+				</div>
+
+				<div class="row form-group">
+					<div class="form_cancel col-md-offset-8 col-md-2 col-xs-4">
+						<a href="{{ path('cookiejar_homepage') }}" class="btn btn-default btn-block">{{ 'standard_cancel' | trans }}</a>
+					</div>
+					<div class="form_submit col-md-2 col-xs-8">
+						<input type="submit" value="{{ 'standard_validate' | trans }}" class="btn btn-warning btn-block" />
+					</div>
+				</div>
+
+				{{ form_end(form) }}
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+var fileCount = '{{ form.documents|length }}';
+var removeButton = "<button type='button' class='btn btn-danger btn-xs' onclick='removeFile($(this));'><i class='fa fa-times' aria-hidden='true'></i></button>";
+
+function removeFile(ob)
+{
+	ob.parent().parent().remove();
+}
+
+function createAddFile(fileCount)
+{
+	// grab the prototype template
+	var newWidget = $("#filesProto").attr('data-prototype');
+	// replace the "__name__" used in the id and name of the prototype
+	newWidget = newWidget.replace(/__name__/g, fileCount);
+
+	newWidget = "<div style='display:none'>" + newWidget + "</div>";
+
+	hideStuff = "";
+	hideStuff += "<div class='col col-xs-1' id='jsRemove" + fileCount + "' style='display: none;'>";
+		hideStuff += removeButton;
+	hideStuff += "</div>";
+
+	hideStuff += "<div class='col col-xs-11' id='jsPreview" + fileCount + "'>";
+	hideStuff += "</div>";
+
+	hideStuff += "<div class='col col-xs-12'>";
+		hideStuff += "<button type='button' id='jsBtnUpload" + fileCount + "' class='btn btn-warning'>";
+			hideStuff += "<i class='fa fa-plus'></i> {{ 'document' | trans }}";
+		hideStuff += "</button>";
+	hideStuff += "</div>";
+
+	$("#filesBox").append("<div class='row'>" + hideStuff + newWidget + "</div>");
+
+	// On click => Simulate file behaviour
+	$("#jsBtnUpload" + fileCount).on('click', function(e){
+		$('#playground_cookiejarbundle_folder_documents_' + fileCount + '_file').trigger('click');
+	});
+
+	// Once the file is added
+	$('#playground_cookiejarbundle_folder_documents_' + fileCount + '_file').on('change', function() {
+		// Show its name
+		fileName = $(this).prop('files')[0].name;
+		$("#jsPreview" + fileCount).append(fileName);
+		// Hide the add file button
+		$("#jsBtnUpload" + fileCount).hide();
+		// Show the remove file button
+		$("#jsRemove" + fileCount).show();
+
+		// Create another instance of add file button and company
+		createAddFile(parseInt(fileCount)+1);
+	});
+}
+
+$(document).ready(function(){
+	createAddFile(fileCount);
+	fileCount++;
+});
+</script>

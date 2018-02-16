@@ -1,0 +1,37 @@
+{# src/Playground/CookiejarBundle/Resources/views/Folder/view.html.twig #}
+
+{% extends "base.html.twig" %}
+
+{% block breadcrumbs %}
+<h2>
+{{ folder.name }}
+</h2>
+{% endblock %}
+
+{% block main_content %}
+
+<div class="row">
+	<div class="col col-lg-8 col-lg-offset-2 col-md-12">
+		<div class="ibox float-e-margins">
+			<div class="ibox-title  yellow-bg">
+				<h5>
+					{{ 'documents' | trans }}
+				</h5>
+			</div>
+			<div class="ibox-content">
+				{% for document in folder.documents %}
+					{% set url = 'uploads/documents/' ~ document.getUrl %}
+						<a href="{{ asset(url) }}" target="_blank">
+							{{ document.name }}
+						</a>
+					{% if loop.index < folder.documents | length %}
+						<br>
+					{% endif %}
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}

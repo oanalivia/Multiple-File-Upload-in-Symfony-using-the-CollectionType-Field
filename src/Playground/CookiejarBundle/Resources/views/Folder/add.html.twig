@@ -1,0 +1,15 @@
+{# src/Playground/CookiejarBundle/Resources/views/Folder/add.html.twig #}
+
+{% extends "base.html.twig" %}
+
+{% block breadcrumbs %}
+<h2>
+{{ 'folder_add' | trans }}
+</h2>
+{% endblock %}
+
+{% block main_content %}
+
+{{ include("@CookiejarBundle/Folder/form_simple.html.twig") }}
+
+{% endblock %}

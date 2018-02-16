@@ -1,0 +1,18 @@
+cookiejar_folder_add:
+    path:     /cookieja/folder/add
+    defaults:
+        _controller: PlaygroundCookiejarBundle:Folder:add
+
+cookiejar_folder_edit:
+    path:     /cookieja/folder/{id}/edit
+    defaults:
+        _controller: PlaygroundCookiejarBundle:Folder:edit
+        requirements:
+            id: \d+
+
+cookiejar_folder_view:
+    path:     /cookieja/folder/{id}/view
+    defaults:
+        _controller: PlaygroundCookiejarBundle:Folder:view
+        requirements:
+            id: \d+
